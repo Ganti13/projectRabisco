@@ -61,7 +61,6 @@ module.exports = {
 
     async show(req, res){
         try {
-
             const tatoo = await Tatoo.findByPk(req.params.id)
             if(!tatoo){return res.status(400)
                 .json({error: 'nenhuma Tatoo encontrada'})}
@@ -83,6 +82,9 @@ module.exports = {
             else if(!tatooUpdate){return res.status(400).json({error: 'Erro ao salvar'})}
             const tatoo = await Tatoo.findByPk(req.params.id)
             if(!tatoo){return res.status(400).json({error: 'Tatoo não encontrada'})}
+            else if(tatoo.userId !== req.user.id){
+                return res.status(401).json({error: 'Sem permissão'})
+            }
             await tatoo.update({...tatooUpdate, files})
 
             return res.json(tatoo)
